@@ -11,6 +11,7 @@ module Her
   #   @user.save
   module Model
     autoload :Base,          "her/model/base"
+    autoload :API,           "her/model/api"
     autoload :HTTP,          "her/model/http"
     autoload :ORM,           "her/model/orm"
     autoload :Relationships, "her/model/relationships"
@@ -21,6 +22,7 @@ module Her
     extend ActiveSupport::Concern
 
     # Instance methods
+    include Her::Model::API
     include Her::Model::ORM
     include Her::Model::Introspection
     include Her::Model::Paths

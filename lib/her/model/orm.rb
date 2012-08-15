@@ -15,22 +15,6 @@ module Her
         collection_data.map { |item_data| Object.const_get(name.to_s.classify).new(item_data) }
       end # }}}
 
-      # Handles missing methods by routing them through @data
-      # @private
-      def method_missing(method, attrs=nil) # {{{
-        assignment_method = method.to_s =~ /\=$/
-        method = method.to_s.gsub(/(\?|\!|\=)$/, "").to_sym
-        if attrs and assignment_method
-          @data[method.to_s.gsub(/\=$/, "").to_sym] = attrs
-        else
-          if @data.include?(method)
-            @data[method]
-          else
-            super
-          end
-        end
-      end # }}}
-
       # Override the method to prevent from returning the object ID (in ruby-1.8.7)
       # @private
       def id # {{{
@@ -57,6 +41,7 @@ module Her
       #   # Fetched via GET "/users/1"
       def find(id, params={}) # {{{
         request(params.merge(:_method => :get, :_path => "#{build_request_path(params.merge(:id => id))}")) do |parsed_data|
+          puts "parsed_data #{parsed_data.inspect}"
           new(parsed_data[:data])
         end
       end # }}}
@@ -124,7 +109,7 @@ module Her
             perform_hook(resource, :before, :update)
             perform_hook(resource, :before, :save)
           end
-          self.class.request(params.merge(:_method => :put, :_path => "#{request_path}")) do |parsed_data|
+          self.request(params.merge(:_method => :put, :_path => "#{request_path}")) do |parsed_data|
             @data = parsed_data[:data]
           end
           self.class.class_eval do
@@ -137,7 +122,7 @@ module Her
             perform_hook(resource, :before, :create)
             perform_hook(resource, :before, :save)
           end
-          self.class.request(params.merge(:_method => :post, :_path => "#{request_path}")) do |parsed_data|
+          self.request(params.merge(:_method => :post, :_path => "#{request_path}")) do |parsed_data|
             @data = parsed_data[:data]
           end
           self.class.class_eval do
@@ -158,7 +143,7 @@ module Her
         params = @data.dup
         resource = self
         self.class.class_eval { perform_hook(resource, :before, :destroy) }
-        self.class.request(params.merge(:_method => :delete, :_path => "#{request_path}")) do |parsed_data|
+        self.request(params.merge(:_method => :delete, :_path => "#{request_path}")) do |parsed_data|
           @data = parsed_data[:data]
         end
         self.class.class_eval { perform_hook(resource, :after, :destroy) }

@@ -4,13 +4,22 @@ module Her
     module HTTP
       # Link a model with a Her::API object
       def uses_api(api) # {{{
+        raise "Can't set api to nil" if api.nil?
         @her_api = api
       end # }}}
+
+      # @protected
+      def her_api
+        #puts "Her::Model::HTTP#her_api #{@her_api}, #{self}"
+        raise "No api?" unless @her_api
+        @her_api
+      end
 
       # Main request wrapper around Her::API. Used to make custom request to the API.
       # @private
       def request(attrs={}, &block) # {{{
-        yield @her_api.request(attrs)
+        #puts "requesting #{attrs.inspect} with #{her_api.inspect}"
+        yield her_api.request(attrs)
       end # }}}
 
       # Make a GET request and return either a collection or a resource

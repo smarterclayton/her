@@ -1,6 +1,23 @@
 module Her
   module Model
     module Introspection
+
+      # Handles missing methods by routing them through @data
+      # @private
+      def method_missing(method, attrs=nil) # {{{
+        assignment_method = method.to_s =~ /\=$/
+        method = method.to_s.gsub(/(\?|\!|\=)$/, "").to_sym
+        if attrs and assignment_method
+          @data[method.to_s.gsub(/\=$/, "").to_sym] = attrs
+        else
+          if @data.include?(method)
+            @data[method]
+          else
+            super
+          end
+        end
+      end # }}}
+
       # Inspect an element, returns it for introspection.
       #
       # @example

@@ -27,7 +27,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rb-fsevent", "0.9.1"
   s.add_development_dependency "growl", "1.0.3"
 
-  s.add_runtime_dependency "activesupport", "3.2.3"
+  s.add_runtime_dependency "i18n", "0.5.0"
+  s.add_runtime_dependency "activesupport", "3.0.10"
   s.add_runtime_dependency "faraday", "0.8.0"
   s.add_runtime_dependency "multi_json", "1.3.4"
 end
